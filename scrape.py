@@ -16,12 +16,16 @@ def get_num(text, s):
 
 def main():
     data_list = []
+    print("Starting...")
     for i in range(1, 30):
         raw_text = urllib.request.urlopen("http://www.funnyjunk.com/item/auction/date/desc/120/%s" % i)
         f = raw_text.read().decode('utf-8')
         
         if "No offer found." in f:
+            print("Done scraping!")
             break
+        else:
+            print("Page %s\t" % i, end='')
         
         # Laxy mix of parsing
         f = f.split("<div id='offer_items'>")[1]
@@ -58,9 +62,23 @@ def main():
             # Current data_list format
             # Item name, user, quantity, offer price, price/unit, offer date, image ID, date accessed
             data_list.append([name, user, quantity, points, ppu, od, img_id, today])
-            
             j+=1
             
-        print(data_list)    
+            
+        print('...')
+            
+    #print(data_list)
+    
+    print("Appending data...")
+    
+    import csv
+    f = open("data/data.csv", 'a', newline='')
+    wr = csv.writer(f)
+    wr.writerows(data_list)
+        
+        
+    print("Done appending!")
+    
+    
         
 main()
