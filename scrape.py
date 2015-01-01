@@ -15,51 +15,52 @@ def get_num(text, s):
 
 
 def main():
-    raw_text = urllib.request.urlopen("http://www.funnyjunk.com/item/auction/")
-    f = raw_text.read().decode('utf-8')
-    
-    # Laxy mix of parsing
-    f = f.split("<div id='offer_items'>")[1]
-    f = f.split('<div class="comPaginatorPages">')[:-1]
-    f = "".join(f)
-    
-    soup = BeautifulSoup(f)
-
-    full_text = soup.get_text()
-    full_list = full_text.split('Buy')[:-1]
-    
     data_list = []
+    for i in range(1, 30):
+        raw_text = urllib.request.urlopen("http://www.funnyjunk.com/item/auction/date/desc/120/%s" % i)
+        f = raw_text.read().decode('utf-8')
+        
+        if "No offer found." in f:
+            break
+        
+        # Laxy mix of parsing
+        f = f.split("<div id='offer_items'>")[1]
+        f = f.split('<div class="comPaginatorPages">')[:-1]
+        f = "".join(f)
+        
+        soup = BeautifulSoup(f)
     
-    for block in full_list:
-        block = block.rstrip()
+        full_text = soup.get_text()
+        full_list = full_text.split('Buy')[:-1]
         
-        nu, quantity, points, ppu, od = block.split('\n')
-        name, user = nu.split(' - ')
-        name = name.strip()
-        user = user.strip()
+        j = 0
+        all_img = soup.find_all('img')
         
-        quantity = get_num(quantity, "Quantity:")
-        points = get_num(points, "Points:")
-        ppu = get_num(ppu, "Price per unit::")
+        for block in full_list:
+            block = block.rstrip()
+            
+            nu, quantity, points, ppu, od = block.split('\n')
+            name, user = nu.split(' - ')
+            name = name.strip()
+            user = user.strip()
+            
+            quantity = get_num(quantity, "Quantity:")
+            points = get_num(points, "Points:")
+            ppu = get_num(ppu, "Price per unit::")
+            
+            od = od.strip().partition("Offered date: ")[2]
+            from time import gmtime, strftime
+            today = strftime("%m/%d/%Y", gmtime())
+            if "ago" in od:
+                od = today
+            
+            img_id = all_img[j].get('src')[36:40]
+            # Current data_list format
+            # Item name, user, quantity, offer price, price/unit, offer date, image ID, date accessed
+            data_list.append([name, user, quantity, points, ppu, od, img_id, today])
+            
+            j+=1
+            
+        print(data_list)    
         
-        od = od.strip().partition("Offered date: ")[2]
-        from time import gmtime, strftime
-        today = strftime("%m/%d/%Y", gmtime())
-        if "ago" in od:
-            od = today
-        
-        data_list.append([name, user, quantity, points, ppu, od, today])
-        
-    links = []
-    for link in soup.find_all('img'):
-        links.append(link.get('src')[36:40])
-    for i in range(len(links)):
-        data_list[i].append(links[i])
-        
-    print(data_list)
-        
-        
-        
-    
-    
 main()
