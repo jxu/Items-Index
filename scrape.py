@@ -1,7 +1,10 @@
 # Scrapes item/auction and stores today's standing offers
 # Current time resolution: 1 day (without automated script)
-import urllib.request
+import urllib.request, csv, os.path
 from bs4 import BeautifulSoup
+from time import gmtime, strftime
+
+FILE_PATH = "data/data.csv"
 
 def get_num(text, s):
     text = "".join(text.split()) # Remove whitespace
@@ -53,7 +56,8 @@ def main():
             ppu = get_num(ppu, "Price per unit::")
             
             od = od.strip().partition("Offered date: ")[2]
-            from time import gmtime, strftime
+
+            
             today = strftime("%m/%d/%Y", gmtime())
             if "ago" in od:
                 od = today
@@ -68,16 +72,26 @@ def main():
         print('...')
             
     #print(data_list)
+    file_write = True
     
-    print("Appending data...")
+    if os.path.isfile(FILE_PATH):
+        with open(FILE_PATH, 'r', newline='') as f:
+            r = csv.reader(f) # Works in 'r' mode 
+            for row in r:
+                if row[-1] == today:
+                    print("Today has already been logged!")
+                    file_write = False
+                    break
+            
     
-    import csv
-    f = open("data/data.csv", 'a', newline='')
-    wr = csv.writer(f)
-    wr.writerows(data_list)
+    if file_write:
+        with open(FILE_PATH, 'a', newline='') as f:
+            print("Appending data...")
+            wr = csv.writer(f)
+            wr.writerows(data_list)
         
         
-    print("Done appending!")
+        print("Done appending!")
     
     
         
