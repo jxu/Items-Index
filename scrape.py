@@ -68,8 +68,10 @@ def main():
             data_list.append([name, user, quantity, points, ppu, od, img_id, today])
             j+=1
             
+            print("- ", name, ppu)
             
-        print('...')
+            
+        
             
     #print(data_list)
     file_write = True
