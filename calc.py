@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-ITEM_NAME = "Demonic Ore"
+ITEM_NAME = "Pet Little Green"
 
 def lowest(item_name, start_date, end_date):
     assert(end_date > start_date)
@@ -24,6 +24,9 @@ def lowest(item_name, start_date, end_date):
                 data_rows.append([row_date, float(row[4])] ) 
                 
         
+    assert(data_rows)
+    print(data_rows)
+    
     lowest_rows = []
     current_date = start_date
     
@@ -32,8 +35,8 @@ def lowest(item_name, start_date, end_date):
         for rows in data_rows:
             if rows[0] == current_date:
                 x.append(rows)
-        
-        lowest_rows.append(sorted(x, key=lambda x: x[1])[0])
+        if x:
+            lowest_rows.append(sorted(x, key=lambda x: x[1])[0])
         current_date += timedelta(days = 1)
         
 

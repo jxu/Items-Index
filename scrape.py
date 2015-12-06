@@ -1,10 +1,12 @@
-# Scrapes item/auction and stores today's standing offers
+# Scrapes Auction House and stores today's standing offers
 # Current time resolution: 1 day (without automated script)
-import urllib.request, csv, os.path
-from bs4 import BeautifulSoup
-from time import gmtime, strftime
 
-FILE_PATH = "data/data.csv"
+# Current data_list format:
+# Item name, user, quantity, offer price, price/unit, offer date, image ID, date accessed
+from bs4 import BeautifulSoup
+import requests
+
+FILE_PATH = "data/new.csv"
 
 def get_num(text, s):
     text = "".join(text.split()) # Remove whitespace
@@ -17,84 +19,67 @@ def get_num(text, s):
         return int(r)
 
 
-def main():
+def scrape():
     data_list = []
     print("Starting...")
-    for i in range(1, 30):
-        raw_text = urllib.request.urlopen("http://www.funnyjunk.com/item/auction/date/desc/120/%s" % i)
-        f = raw_text.read().decode('utf-8')
-        
+    for i in range(1, 2):
+        response = requests.get("http://www.funnyjunk.com/item/auction/date/desc/120/%s" % i)
+        html = response.content
+
+        # Manual parsing horror is gone!
+        soup = BeautifulSoup(html)
+        table = soup.find("ul", attrs={"class": "offerList"})
+        for entry in table.findAll("div", attrs={"class": "offerInfo"}):
+            print(entry.prettify())
+            item_name = entry.find("span", attrs={"class": "pinkLight"}).text
+            print(item_name)
+            user = entry.find("a").text
+            print(user)
+            # regex the br/
+
+
+            print()
+
+
+            return
+
         if "No offer found." in f:
             print("Done scraping!")
             break
         else:
             print("Page %s\t" % i, end='')
-        
-        # Laxy mix of parsing
-        f = f.split("<div id='offer_items'>")[1]
-        f = f.split('<div class="comPaginatorPages">')[:-1]
-        f = "".join(f)
-        
-        soup = BeautifulSoup(f)
-    
-        full_text = soup.get_text()
-        full_list = full_text.split('Buy')[:-1]
-        
-        j = 0
-        all_img = soup.find_all('img')
-        
-        for block in full_list:
-            block = block.rstrip()
-            
-            nu, quantity, points, ppu, od = block.split('\n')
-            name, user = nu.split(' - ')
-            name = name.strip()
-            user = user.strip()
-            
-            quantity = get_num(quantity, "Quantity:")
-            points = get_num(points, "Points:")
-            ppu = get_num(ppu, "Price per unit::")
-            
-            od = od.strip().partition("Offered date: ")[2]
 
-            
-            today = strftime("%m/%d/%Y", gmtime())
-            if "ago" in od:
-                od = today
-            
-            img_id = all_img[j].get('src')[36:40]
-            # Current data_list format
-            # Item name, user, quantity, offer price, price/unit, offer date, image ID, date accessed
-            data_list.append([name, user, quantity, points, ppu, od, img_id, today])
-            j+=1
-            
-            print("- ", name, ppu)
-            
-            
-        
-            
-    #print(data_list)
+
+    return data_list
+
+def file_write(data_list):
     file_write = True
-    
+
     if os.path.isfile(FILE_PATH):
         with open(FILE_PATH, 'r', newline='') as f:
-            r = csv.reader(f) # Works in 'r' mode 
+            r = csv.reader(f) # Works in 'r' mode
             for row in r:
                 if row[-1] == today:
                     print("Today has already been logged!")
                     file_write = False
                     break
-            
-    
+
+
     if file_write:
         with open(FILE_PATH, 'a', newline='') as f:
             print("Appending data...")
             wr = csv.writer(f)
             wr.writerows(data_list)
-        
-        
+
+
         print("Done appending!")
-    
-    
-        
+
+
+
+
+def main():
+    scrape()
+
+
+
 main()
