@@ -31,13 +31,17 @@ def scrape():
             item_name = entry.find("span", attrs={"class": "pinkLight"}).text
             user = entry.find("a").text
             entry_text = str(entry)
-            print(entry_text)
+            #print(entry_text)
             quantity = process_int(re.search("Quantity: (.*)<br", entry_text).group(1))
             price = process_int(re.search("Points: (.*)<br", entry_text).group(1))
             ppu = process_float(re.search("Price per unit:: (.*)<br", entry_text).group(1))
-            print(quantity, price, ppu)
-            print()
 
+            # Offer date not done calculating
+            offer_date_text = re.search("Offered date: (.*)</div>", entry_text).group(1)
+
+            img_src = entry.find("img")["src"]
+            img_code = re.search("pro_img_(.{8})", img_src).group(1)  # More exact: "pro_img_(.{8}).*\.(gif|png)"
+            
             return
 
         if "No offer found." in f:
@@ -51,6 +55,7 @@ def scrape():
 
 def file_write(data_list):
     # Deprecated
+    import os, csv
     file_write = True
 
     if os.path.isfile(FILE_PATH):
