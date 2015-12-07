@@ -19,16 +19,25 @@ def process_float(s):
 def scrape():
     data_list = []
     print("Starting...")
-    for i in range(1, 2):
+    for i in range(1, 30):
         response = requests.get("http://www.funnyjunk.com/item/auction/date/desc/120/%s" % i)
         html = response.content
+        soup = BeautifulSoup(html)
 
         # Manual parsing horror is gone!
-        soup = BeautifulSoup(html)
+        if soup.find("li", attrs={"class": "offerNotFound"}):
+            print("Done scraping!")
+            break
+
+
         table = soup.find("ul", attrs={"class": "offerList"})
         for entry in table.findAll("li"):  # div offerInfo and img src
             #print(entry.prettify())
             item_name = entry.find("span", attrs={"class": "pinkLight"}).text
+            if not item_name:
+                print("Cancelled")
+                continue
+
             user = entry.find("a").text
             entry_text = str(entry)
             #print(entry_text)
@@ -40,16 +49,15 @@ def scrape():
             offer_date_text = re.search("Offered date: (.*)</div>", entry_text).group(1)
 
             img_src = entry.find("img")["src"]
-            img_code = re.search("pro_img_(.{8})", img_src).group(1)  # More exact: "pro_img_(.{8}).*\.(gif|png)"
-            
-            return
+            try:
+                img_code = re.search("(.{8}).{24}\.(gif|png|jpg)", img_src).group(1)
+            except:
+                print(img_src)
+                break
 
-        if "No offer found." in f:
-            print("Done scraping!")
-            break
-        else:
-            print("Page %s\t" % i, end='')
+            print("...", item_name, user, quantity, price, ppu, offer_date_text, img_code)
 
+        print("Done page %s\t" % i)
 
     return data_list
 
