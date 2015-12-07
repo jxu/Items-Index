@@ -5,18 +5,15 @@
 # Item name, user, quantity, offer price, price/unit, offer date, image ID, date accessed
 from bs4 import BeautifulSoup
 import requests
+import re
 
 FILE_PATH = "data/new.csv"
 
-def get_num(text, s):
-    text = "".join(text.split()) # Remove whitespace
-    text = text.replace(',', '')
-    s = "".join(s.split())
-    r = text.partition(s)[2]
-    if '.' in r:
-        return float(r)
-    else:
-        return int(r)
+def process_int(s):
+    return int(s.replace(',', ''))
+
+def process_float(s):
+    return float(s.replace(',', ''))
 
 
 def scrape():
@@ -29,17 +26,17 @@ def scrape():
         # Manual parsing horror is gone!
         soup = BeautifulSoup(html)
         table = soup.find("ul", attrs={"class": "offerList"})
-        for entry in table.findAll("div", attrs={"class": "offerInfo"}):
-            print(entry.prettify())
+        for entry in table.findAll("li"):  # div offerInfo and img src
+            #print(entry.prettify())
             item_name = entry.find("span", attrs={"class": "pinkLight"}).text
-            print(item_name)
             user = entry.find("a").text
-            print(user)
-            # regex the br/
-
-
+            entry_text = str(entry)
+            print(entry_text)
+            quantity = process_int(re.search("Quantity: (.*)<br", entry_text).group(1))
+            price = process_int(re.search("Points: (.*)<br", entry_text).group(1))
+            ppu = process_float(re.search("Price per unit:: (.*)<br", entry_text).group(1))
+            print(quantity, price, ppu)
             print()
-
 
             return
 
@@ -53,6 +50,7 @@ def scrape():
     return data_list
 
 def file_write(data_list):
+    # Deprecated
     file_write = True
 
     if os.path.isfile(FILE_PATH):
