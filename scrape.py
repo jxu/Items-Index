@@ -29,7 +29,6 @@ def scrape():
             print("Done scraping!")
             break
 
-
         table = soup.find("ul", attrs={"class": "offerList"})
         for entry in table.findAll("li"):  # div offerInfo and img src
             #print(entry.prettify())
@@ -50,9 +49,9 @@ def scrape():
 
             img_src = entry.find("img")["src"]
             try:
-                img_code = re.search("(.{8}).{24}\.(gif|png|jpg)", img_src).group(1)
+                img_code = re.search("(.{8})\.(gif|png|jpg)", img_src).group(1)
             except:
-                print(img_src)
+                print("Image code error:", img_src)
                 break
 
             print("...", item_name, user, quantity, price, ppu, offer_date_text, img_code)
