@@ -6,14 +6,32 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+from datetime import datetime, timedelta
 
-FILE_PATH = "data/new.csv"
+FILE_PATH = "data/ah.db"
 
 def process_int(s):
     return int(s.replace(',', ''))
 
 def process_float(s):
     return float(s.replace(',', ''))
+
+def process_datetime(text):
+    # Only return dates
+    if '/' in text:
+        return datetime.strptime(text, "%m/%d/%Y").date()
+    else:
+        now = datetime.utcnow()
+        quantity, time_unit = re.search("(\d*) ([a-z]*) ago", text).group(1, 2)
+        quantity = int(quantity)
+        if "second" in time_unit:
+            tdelta = timedelta(seconds=quantity)
+        elif "minute" in time_unit:
+            tdelta = timedelta(minutes=quantity)
+        elif "hour" in time_unit:
+            tdelta = timedelta(hours=quantity)
+
+        return (now-tdelta).date()
 
 
 def scrape():
@@ -45,7 +63,8 @@ def scrape():
             ppu = process_float(re.search("Price per unit:: (.*)<br", entry_text).group(1))
 
             # Offer date not done calculating
-            offer_date_text = re.search("Offered date: (.*)</div>", entry_text).group(1)
+            offer_datetime_text = re.search("Offered date: (.*)</div>", entry_text).group(1)
+            offer_datetime = process_datetime(offer_datetime_text)
 
             img_src = entry.find("img")["src"]
             try:
@@ -54,7 +73,7 @@ def scrape():
                 print("Image code error:", img_src)
                 break
 
-            print("...", item_name, user, quantity, price, ppu, offer_date_text, img_code)
+            print("...", item_name, user, quantity, price, ppu, offer_datetime_text, img_code, offer_datetime)
 
         print("Done page %s\t" % i)
 

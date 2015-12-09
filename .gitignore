@@ -103,3 +103,4 @@ $RECYCLE.BIN/
 *.csv
 
 .idea/
+data/
