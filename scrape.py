@@ -7,8 +7,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from datetime import datetime, timedelta
-
-FILE_PATH = "data/ah.db"
+import sqlite3
 
 def process_int(s):
     return int(s.replace(',', ''))
@@ -64,7 +63,7 @@ def scrape():
 
             # Offer date not done calculating
             offer_datetime_text = re.search("Offered date: (.*)</div>", entry_text).group(1)
-            offer_datetime = process_datetime(offer_datetime_text)
+            offer_date = process_datetime(offer_datetime_text)
 
             img_src = entry.find("img")["src"]
             try:
@@ -73,13 +72,16 @@ def scrape():
                 print("Image code error:", img_src)
                 break
 
-            print("...", item_name, user, quantity, price, ppu, offer_datetime_text, img_code, offer_datetime)
+            print("...", item_name, user, quantity, price, ppu, img_code, offer_date)
+            now = datetime.utcnow()
+            data_list.append((item_name, user, quantity, price, ppu, img_code, offer_date, now))
 
         print("Done page %s\t" % i)
 
     return data_list
 
-def file_write(data_list):
+
+def file_write_csv(data_list):
     # Deprecated
     import os, csv
     file_write = True
@@ -93,22 +95,32 @@ def file_write(data_list):
                     file_write = False
                     break
 
-
     if file_write:
         with open(FILE_PATH, 'a', newline='') as f:
             print("Appending data...")
             wr = csv.writer(f)
             wr.writerows(data_list)
 
-
         print("Done appending!")
 
 
+def write_sqlite(data):
+    conn = sqlite3.connect("data/ah.db")
+    c = conn.cursor()
+    c.execute("""CREATE TABLE IF NOT EXISTS listing (item_name text, user text, quantity integer, price integer,
+                 ppu real, img_code text, offer_date integer, scrape_datetime integer)""")
+
+    # Convert datetime first!
+    #c.executemany("INSERT INTO listing VALUES (?,?,?,?,?,?,?)", data)
+
+    conn.commit()
+    conn.close()
 
 
 def main():
-    scrape()
+    data_list = scrape()
+    write_sqlite(data_list)
 
 
-
-main()
+if __name__ == "__main__":
+    main()
