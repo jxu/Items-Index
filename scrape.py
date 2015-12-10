@@ -111,8 +111,10 @@ def file_write_csv(data_list):
 def write_sqlite(data):
     conn = sqlite3.connect("data/ah.db")
     c = conn.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS listing (item_name text, user text, quantity integer, price integer,
-                 ppu real, img_code text, offer_date integer, scrape_datetime integer)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS listing (item_name TEXT, user TEXT, quantity INTEGER, price INTEGER,
+                 ppu REAL, img_code TEXT, offer_date INTEGER, scrape_datetime INTEGER)""")
+
+    c.execute("CREATE INDEX IF NOT EXISTS scrape_index ON listing (scrape_datetime)")
 
     c.executemany("INSERT INTO listing VALUES (?,?,?,?,?,?,?,?)", data)
 
