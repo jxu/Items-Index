@@ -6,8 +6,9 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import sqlite3
+import calendar
 
 def process_int(s):
     return int(s.replace(',', ''))
@@ -61,7 +62,6 @@ def scrape():
             price = process_int(re.search("Points: (.*)<br", entry_text).group(1))
             ppu = process_float(re.search("Price per unit:: (.*)<br", entry_text).group(1))
 
-            # Offer date not done calculating
             offer_datetime_text = re.search("Offered date: (.*)</div>", entry_text).group(1)
             offer_date = process_datetime(offer_datetime_text)
 
@@ -72,9 +72,13 @@ def scrape():
                 print("Image code error:", img_src)
                 break
 
-            print("...", item_name, user, quantity, price, ppu, img_code, offer_date)
-            now = datetime.utcnow()
-            data_list.append((item_name, user, quantity, price, ppu, img_code, offer_date, now))
+            # For datetime
+            now_ts = int(datetime.utcnow().replace(tzinfo=timezone.utc).timestamp())
+            # For date
+            offer_date_ts = calendar.timegm(offer_date.timetuple())
+
+            print("...", item_name, user, quantity, price, ppu, img_code, offer_date_ts, now_ts)
+            data_list.append((item_name, user, quantity, price, ppu, img_code, offer_date_ts, now_ts))
 
         print("Done page %s\t" % i)
 
@@ -110,8 +114,7 @@ def write_sqlite(data):
     c.execute("""CREATE TABLE IF NOT EXISTS listing (item_name text, user text, quantity integer, price integer,
                  ppu real, img_code text, offer_date integer, scrape_datetime integer)""")
 
-    # Convert datetime first!
-    #c.executemany("INSERT INTO listing VALUES (?,?,?,?,?,?,?)", data)
+    c.executemany("INSERT INTO listing VALUES (?,?,?,?,?,?,?,?)", data)
 
     conn.commit()
     conn.close()
