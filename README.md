@@ -8,8 +8,9 @@ Documentation in code currently.
 Usage
 -----
 - Have a cron job that runs `scrape.py`
-- Have `dygraphs-combined.js` and 'sql.js' in `js/` folder
+- Have `dygraphs-combined.js` in root folder
 - ???
 
 **To do:**
 - Track price averages, changes
+- The current methods involve jQuery, PHP, shell, and SQLite all at once...
