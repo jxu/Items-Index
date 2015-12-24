@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Test</h1>
+<p>Test.</p>
+
+<script src='js/sql.js'></script>
+<script>
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', 'data/ah.db', true);
+	xhr.responseType = 'arraybuffer';
+
+	xhr.onload = function(e) {
+		var uInt8Array = new Uint8Array(this.response);
+		var db = new SQL.Database(uInt8Array);
+		var contents = db.exec("SELECT * FROM listing");
+		console.log(contents[0]);
+		
+	};
+	xhr.send();
+</script>
+
+</body>
+</html> 

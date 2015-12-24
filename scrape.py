@@ -60,7 +60,7 @@ def scrape():
             #print(entry_text)
             quantity = process_int(re.search("Quantity: (.*)<br", entry_text).group(1))
             price = process_int(re.search("Points: (.*)<br", entry_text).group(1))
-            ppu = process_float(re.search("Price per unit:: (.*)<br", entry_text).group(1))
+            ppu = process_float(re.search("Price per unit::? (.*)<br", entry_text).group(1))
 
             offer_datetime_text = re.search("Offered date: (.*)</div>", entry_text).group(1)
             offer_date = process_datetime(offer_datetime_text)
