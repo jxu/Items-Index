@@ -1,3 +1,3 @@
 <?php
-echo exec('run_sql.sh');
+echo exec("sqlite3 data/ah.db < create_csv.sql")
 ?>

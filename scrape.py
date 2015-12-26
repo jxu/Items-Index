@@ -131,7 +131,7 @@ def write_sqlite(data):
     c.executemany("INSERT OR IGNORE INTO code_lookup VALUES (?,?)", ((row[0], row[5]) for row in data))
 
     #c.execute("CREATE INDEX IF NOT EXISTS scrape_index ON listing (scrape_datetime)")
-    #c.execute("CREATE INDEX IF NOT EXISTS img_index ON listing (img_code)")
+    #c.execute("CREATE INDEX IF NOT EXISTS item_index ON listing (item_name)")
 
     conn.commit()
     conn.close()
