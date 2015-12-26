@@ -13,4 +13,4 @@ Usage
 
 **To do:**
 - Track price averages, changes
-- The current methods involve jQuery, PHP, shell, and SQLite all at once...
+- Instead of creating CSV on demand, 
