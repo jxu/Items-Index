@@ -12,28 +12,12 @@
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 
 <script>
-function sqljs() {
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'data/ah.db', true);
-	xhr.responseType = 'arraybuffer';
-
-	xhr.onload = function(e) {
-		var uInt8Array = new Uint8Array(this.response);
-		var db = new SQL.Database(uInt8Array);
-		
-		var contents = db.exec("SELECT * FROM listing WHERE item_name='Casino Token'");
-		console.log(contents[0]);
-		//console.log("done");
-	};
-	xhr.send();
-};
-
 function runPHP() {
 	$.post(
 		"run_sql.php",
 		{item_name: 'Gold Spear'},
 		function(data){
-			console.log(data);
+		;
 		}
 	);
 };	

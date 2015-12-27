@@ -1,6 +1,7 @@
 <?php
+include 'ChromePhp.php';
 $item_name = $_POST['item_name'];
-echo $item_name, "\n";
+ChromePhp::log($item_name);
 
 class MyDB extends SQLite3
 {
@@ -11,17 +12,16 @@ class MyDB extends SQLite3
 }
 $db = new MyDB();
 if (!$db)
-	echo $db->lastErrorMsg();
+	ChromePHP::log($db->lastErrorMsg());
 else
-	echo "Database loaded\n";
+	ChromePHP::log("Database loaded\n");
 	
-$statement = $db->prepare('SELECT * FROM listing WHERE item_name=:item_name');
+$statement = $db->prepare('SELECT scrape_datetime,ppu FROM listing WHERE item_name=:item_name');
 $statement->bindValue(':item_name', $item_name);
 $results = $statement->execute();
 
-while($row = $results->fetchArray())
+while($row = $results->fetchArray(SQLITE3_ASSOC))
 {
-	var_dump($row);
+	ChromePHP::log($row);
 }
-		
 ?>
