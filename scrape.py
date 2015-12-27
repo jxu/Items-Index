@@ -134,6 +134,15 @@ def write_sqlite(data):
     #c.execute("CREATE INDEX IF NOT EXISTS item_index ON listing (item_name)")
 
     conn.commit()
+
+    c.execute("SELECT item_name FROM code_lookup")  # All unique item names
+    fetch = c.fetchall()
+    item_names = sorted((str(x[0]) for x in fetch), key=str.lower)
+    with open("data/all_items.txt", 'w') as f:
+        for item in item_names:
+            f.write("%s\n" % item)
+    print("Done writing unique item names!")
+
     conn.close()
 
 
