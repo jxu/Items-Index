@@ -16,12 +16,19 @@ if (!$db)
 else
 	ChromePHP::log("Database loaded\n");
 	
-$statement = $db->prepare('SELECT scrape_datetime,ppu FROM listing WHERE item_name=:item_name');
+$statement = $db->prepare('SELECT scrape_datetime,min(ppu) 
+						   FROM listing 
+						   WHERE item_name=:item_name 
+						   GROUP BY scrape_datetime');
 $statement->bindValue(':item_name', $item_name);
 $results = $statement->execute();
 
+$php_array = array();
 while($row = $results->fetchArray(SQLITE3_ASSOC))
 {
 	ChromePHP::log($row);
+	array_push($php_array, $row);
 }
+
+echo json_encode($php_array);
 ?>
