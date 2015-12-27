@@ -1,3 +1,4 @@
 <?php
-echo exec("sqlite3 data/ah.db < create_csv.sql")
+$item_name = $_POST['item_name'];
+echo $item_name;
 ?>

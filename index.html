@@ -5,7 +5,7 @@
 <h1>Test</h1>
 <p>Test.</p>
 
-<input id="clickMe" type="button" value="clickme" onclick="sqljs()" />
+<input id="clickMe" type="button" value="clickme" onclick="runPHP()" />
 
 
 <script src='js/sql.js'></script>
@@ -29,7 +29,13 @@ function sqljs() {
 };
 
 function runPHP() {
-	$('#test').load('run_sql.php');
+	$.post(
+		"run_sql.php",
+		{item_name: 'testitem'},
+		function(data){
+			console.log(data);
+		}
+	);
 };	
 
 

@@ -1,7 +1,7 @@
 Items index
 ===========
 
-WIP scrapes and graphs historical items prices and offers.
+Hobbled together javascript and python mess that scrapes and graphs historical items prices and offers.
 
 Documentation in code currently.
 
@@ -13,4 +13,3 @@ Usage
 
 **To do:**
 - Track price averages, changes
-- Instead of creating CSV on demand, 
