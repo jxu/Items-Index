@@ -2,7 +2,7 @@
 include 'ChromePhp.php';
 
 $item_name = $_POST['item_name'];
-ChromePhp::log($item_name);
+ChromePhp::log('PHP ' . $item_name);
 
 class MyDB extends SQLite3
 {

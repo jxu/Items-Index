@@ -1,45 +1,39 @@
 <!DOCTYPE html>
 <html>
+<head>
+	<meta charset="utf-8">
+	<title>Don't expect it to work</title>
+	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="js/dygraph-combined.js"></script>
+	<script src="foo.js"></script>
+</head>
 <body>
 <h1>Test</h1>
 <p>Test.</p>
 
-<input id="clickMe" type="button" value="Click me" onclick="runPHP()" />
-
-<script src='js/sql.js'></script>
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="js/dygraph-combined.js"></script>
-
 <script>
-function runPHP() {
-	var item_name = 'Bucket Of Coal';
-	$.post(
-		"run_sql.php",
-		{item_name: item_name},
-		function(data){
-			num_array = JSON.parse(data);
-
-			// Convert array of objects to array of arrays
-			for (i=0; i < num_array.length; i++){
-				num_array[i] = $.map(num_array[i], function(el) {return el});
-				num_array[i][0] = new Date(num_array[i][0]*1000);
-			}
-			console.log(num_array)
-
-			g = new Dygraph(document.getElementById("graphdiv"),
-							num_array,
-							{
-								labels: ["Datetime", item_name],
-								labelsSeperateLines: true,
-								title: "Items Index",
-								xlabel: "Time and date",
-								ylabel: "Price per unit",
-							});		
-		}
-	);
-};	
-
+$.get('data/all_items.txt', function(data){
+	var options = data.split("\n");
+	options.pop(); // Trailing newline
+	
+	// Add item names to select menu
+	var select = document.getElementById("selectItem");
+	for (var i=0; i<options.length; i++){
+		//console.log(JSON.stringify(options[i]));
+		options[i] = options[i].trim(); // Get rid of pesky \r
+		var el = document.createElement("option");
+		el.textContent = options[i];
+		el.value = options[i];
+		select.appendChild(el);
+	}
+});
 </script>
+
+<select id="selectItem">
+	<option>Choose an item</option>
+</select>
+
+<input id="clickMe" type="button" value="Click me" onclick="fetchAndGraph()" />
 
 <br> <br> <br>
 <div id="graphdiv"></div>

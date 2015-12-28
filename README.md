@@ -1,4 +1,4 @@
-Items index
+Items Index
 ===========
 
 Hobbled together javascript and python mess that scrapes and graphs historical items prices and offers.
