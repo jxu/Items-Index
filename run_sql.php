@@ -1,5 +1,6 @@
 <?php
 include 'ChromePhp.php';
+
 $item_name = $_POST['item_name'];
 ChromePhp::log($item_name);
 
@@ -24,9 +25,9 @@ $statement->bindValue(':item_name', $item_name);
 $results = $statement->execute();
 
 $php_array = array();
-while($row = $results->fetchArray(SQLITE3_ASSOC))
+while($row = $results->fetchArray(SQLITE3_ASSOC)) // How it's indexed actually doesn't matter
 {
-	ChromePHP::log($row);
+	//ChromePHP::log($row);
 	array_push($php_array, $row);
 }
 

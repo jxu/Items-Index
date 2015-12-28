@@ -1,30 +1,48 @@
 <!DOCTYPE html>
 <html>
 <body>
-
 <h1>Test</h1>
 <p>Test.</p>
 
-<input id="clickMe" type="button" value="clickme" onclick="runPHP()" />
-
+<input id="clickMe" type="button" value="Click me" onclick="runPHP()" />
 
 <script src='js/sql.js'></script>
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="js/dygraph-combined.js"></script>
 
 <script>
 function runPHP() {
+	var item_name = 'Bucket Of Coal';
 	$.post(
 		"run_sql.php",
-		{item_name: 'Gold Spear'},
+		{item_name: item_name},
 		function(data){
-			console.log(data);
+			num_array = JSON.parse(data);
+
+			// Convert array of objects to array of arrays
+			for (i=0; i < num_array.length; i++){
+				num_array[i] = $.map(num_array[i], function(el) {return el});
+				num_array[i][0] = new Date(num_array[i][0]*1000);
+			}
+			console.log(num_array)
+
+			g = new Dygraph(document.getElementById("graphdiv"),
+							num_array,
+							{
+								labels: ["Datetime", item_name],
+								labelsSeperateLines: true,
+								title: "Items Index",
+								xlabel: "Time and date",
+								ylabel: "Price per unit",
+							});		
 		}
 	);
 };	
 
-
 </script>
 
+<br> <br> <br>
+<div id="graphdiv"></div>
 
 </body>
 </html> 
