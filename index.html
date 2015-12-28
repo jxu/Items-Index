@@ -3,40 +3,45 @@
 <head>
 	<meta charset="utf-8">
 	<title>Don't expect it to work</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
 	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="js/dygraph-combined.js"></script>
 	<script src="foo.js"></script>
 </head>
 <body>
-<h1>Test</h1>
-<p>Test.</p>
+<div id="header">
+	<h1>Items Index</h1>
+</div>
 
-<script>
-$.get('data/all_items.txt', function(data){
-	var options = data.split("\n");
-	options.pop(); // Trailing newline
-	
+<div id="section">
+
+	<script>
 	// Add item names to select menu
-	var select = document.getElementById("selectItem");
-	for (var i=0; i<options.length; i++){
-		//console.log(JSON.stringify(options[i]));
-		options[i] = options[i].trim(); // Get rid of pesky \r
-		var el = document.createElement("option");
-		el.textContent = options[i];
-		el.value = options[i];
-		select.appendChild(el);
-	}
-});
-</script>
+	$.get('data/all_items.txt', function(data){
+		var options = data.split("\n");
+		options.pop(); // Trailing newline
+		
+		var select = document.getElementById("selectItem");
+		for (var i=0; i<options.length; i++){
+			//console.log(JSON.stringify(options[i]));
+			options[i] = options[i].trim(); // Get rid of pesky \r
+			var el = document.createElement("option");
+			el.textContent = options[i];
+			el.value = options[i];
+			select.appendChild(el);
+		}
+	});
+	</script>
 
-<select id="selectItem">
-	<option>Choose an item</option>
-</select>
+	<select id="selectItem">
+		<option>Choose an item</option>
+	</select>
 
-<input id="clickMe" type="button" value="Click me" onclick="fetchAndGraph()" />
+	<input id="clickMe" type="button" value="Click me" onclick="fetchAndGraph()" />
 
-<br> <br> <br>
-<div id="graphdiv"></div>
+	<br> <br> <br>
+	<div id="graphdiv"></div>
 
+</div>
 </body>
 </html> 
