@@ -26,10 +26,6 @@ h1.contentTitle {
     color: #ffffef;
 }
 
-article.main center {
-    background-color: #010215;
-}
-
 strong.title {
     color: #999999;
     background-color: #080925;
@@ -70,5 +66,24 @@ div.search-inner input {
 a.uploadBttn {
     background-color: #14055F;
     border-color: #2A0E8C;
+}
+
+article.main center img {
+    content: url("http://41.media.tumblr.com/7d08438019d1cc64d64a07544cdad1ef/tumblr_no4ax6rQZM1ryw6oao6_250.png");
+    height: 150px;
+    width: 150px;
+}
+
+article.main center {
+    background-color: #010215;
+    text-align: left;
+}
+
+#logoFJ a {
+    background-image: none;
+    undefined: undefined;
+    content: url("http://41.media.tumblr.com/7d08438019d1cc64d64a07544cdad1ef/tumblr_no4ax6rQZM1ryw6oao6_250.png");
+    height: 25px;
+    width: 25px;
 }
 
